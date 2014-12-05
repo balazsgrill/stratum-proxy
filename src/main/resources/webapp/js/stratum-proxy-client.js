@@ -46,7 +46,7 @@ PoolsPageController.prototype.constructor = PageController;
 PoolsPageController.prototype.onLoad = function() {
 	var controller = this;
 	$.ajax({
-		url : "/proxy/pool/list",
+		url : window.location.pathname+"/proxy/pool/list",
 		dataType : "json",
 		contentType : "application/json",
 		success : function(data) {
@@ -125,7 +125,7 @@ PoolsPageController.prototype.refresh = function(onSuccess) {
 
 	// Reload pool data
 	$.ajax({
-		url : "/proxy/pool/list",
+		url : window.location.pathname+"/proxy/pool/list",
 		dataType : "json",
 		contentType : "application/json",
 		success : function(data) {
@@ -192,7 +192,7 @@ PoolsPageController.prototype.setPoolPriority = function(poolName, priority) {
 
 	// Update the priority
 	$.ajax({
-		url : "/proxy/pool/priority",
+		url : window.location.pathname+"/proxy/pool/priority",
 		dataType : "json",
 		type : "POST",
 		data : JSON.stringify({
@@ -268,7 +268,7 @@ PoolsPageController.prototype.openEditPool = function(poolName) {
 						modal.modal('hide');
 						$
 								.ajax({
-									url : '/proxy/pool/update',
+									url : window.location.pathname+'/proxy/pool/update',
 									dataType : "json",
 									type : "POST",
 									data : JSON
@@ -327,9 +327,9 @@ PoolsPageController.prototype.setPoolEnabled = function(poolName, isEnabled) {
 	var controller = this, url;
 
 	if (isEnabled) {
-		url = "/proxy/pool/enable";
+		url = window.location.pathname+"/proxy/pool/enable";
 	} else {
-		url = "/proxy/pool/disable";
+		url = window.location.pathname+"/proxy/pool/disable";
 	}
 
 	// Reload pool data
@@ -379,7 +379,7 @@ PoolsPageController.prototype.removePool = function(poolName) {
 	removePoolFunction = function(keepHistory) {
 		modal.modal('hide');
 		$.ajax({
-			url : '/proxy/pool/remove',
+			url : window.location.pathname+'/proxy/pool/remove',
 			dataType : "json",
 			type : "POST",
 			data : JSON.stringify({
@@ -523,7 +523,7 @@ PoolsPageController.prototype.openAddPool = function() {
 						modal.modal('hide');
 						$
 								.ajax({
-									url : '/proxy/pool/add',
+									url : window.location.pathname+'/proxy/pool/add',
 									dataType : "json",
 									type : "POST",
 									data : JSON
@@ -609,7 +609,7 @@ LogsPageController.prototype.loadLevel = function() {
 	selectPicker.selectpicker('refresh');
 
 	$.ajax({
-		url : '/proxy/log/level',
+		url : window.location.pathname+'/proxy/log/level',
 		dataType : "json",
 		type : "GET",
 		contentType : "application/json",
@@ -638,7 +638,7 @@ LogsPageController.prototype.initLogLevelSelect = function() {
 		var selectedValue = selectPicker.find('option:selected').text();
 		selectPicker.selectpicker('refresh');
 		$.ajax({
-			url : '/proxy/log/level',
+			url : window.location.pathname+'/proxy/log/level',
 			dataType : "json",
 			type : "POST",
 			data : JSON.stringify({
@@ -659,7 +659,7 @@ LogsPageController.prototype.initLogLevelSelect = function() {
 LogsPageController.prototype.refresh = function() {
 	var controller = this;
 	$.ajax({
-		url : '/proxy/log/since',
+		url : window.location.pathname+'/proxy/log/since',
 		dataType : "json",
 		type : "POST",
 		data : JSON.stringify({
@@ -753,7 +753,7 @@ UsersPageController.prototype.constructor = PageController;
 UsersPageController.prototype.onLoad = function() {
 	var controller = this;
 	$.ajax({
-		url : "/proxy/user/list",
+		url : window.location.pathname+"/proxy/user/list",
 		dataType : "json",
 		contentType : "application/json",
 		success : function(data) {
@@ -817,7 +817,7 @@ UsersPageController.prototype.refresh = function(onSuccess) {
 
 	// Reload user data
 	$.ajax({
-		url : "/proxy/user/list",
+		url : window.location.pathname+"/proxy/user/list",
 		dataType : "json",
 		contentType : "application/json",
 		success : function(data) {
@@ -1238,7 +1238,7 @@ PoolItem.prototype.getRemoveButton = function() {
 PoolItem.prototype.reloadChartData = function(isUpdate) {
 	var poolItem = this;
 	$.ajax({
-		url : "/proxy/hashrate/pool",
+		url : window.location.pathname+"/proxy/hashrate/pool",
 		dataType : "json",
 		type : "POST",
 		data : JSON.stringify({
@@ -1516,7 +1516,7 @@ UserItem.prototype.getBanButton = function() {
 UserItem.prototype.reloadChartData = function(isUpdate) {
 	var userItem = this;
 	$.ajax({
-		url : "/proxy/hashrate/user",
+		url : window.location.pathname+"/proxy/hashrate/user",
 		dataType : "json",
 		type : "POST",
 		data : JSON.stringify({
