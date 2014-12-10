@@ -139,7 +139,7 @@ public class WorkerNameMatchingPoolStrategy implements
 		}
 		
 		if (selection == null){
-			throw new NoPoolAvailableException();
+			throw new NoPoolAvailableException("No pool found for ID: "+ids);
 		}
 		
 		return selection;
