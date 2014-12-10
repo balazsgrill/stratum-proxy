@@ -261,10 +261,15 @@ public class ProxyManager {
 		linkConnectionToUser(connection, request);
 		
 		LOGGER.info("Authorized worker: "+request.getUsername());
+		updatePoolForConnection(connection);
+	}
+	
+	public void updatePoolForConnection(WorkerConnection connection){
+		
 		try {
 			Pool p = poolSwitchingStrategyManager.getPoolForConnection(connection);
 			if (!p.equals(connection.getPool())){
-				LOGGER.info("Moving worker {} to pool {}", request.getUsername(), p.getName());
+				LOGGER.info("Moving worker {} to pool {}", connection.getConnectionName(), p.getName());
 				switchPoolForConnection(connection, p);
 			}
 		} catch (Exception e) {

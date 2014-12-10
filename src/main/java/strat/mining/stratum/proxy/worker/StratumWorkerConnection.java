@@ -234,10 +234,15 @@ public class StratumWorkerConnection extends StratumConnection implements Worker
 	protected void onExtranonceSubscribeRequest(MiningExtranonceSubscribeRequest request) {
 		this.isSetExtranonceNotificationSupported = true;
 
+		LOGGER.debug("Worker {} is subscribed to extranonce changes",getConnectionName());
+		
 		MiningExtranonceSubscribeResponse response = new MiningExtranonceSubscribeResponse();
 		response.setId(request.getId());
 		response.setResult(Boolean.TRUE);
 		sendResponse(response);
+		
+		manager.updatePoolForConnection(this);
+		
 	}
 
 	@Override
