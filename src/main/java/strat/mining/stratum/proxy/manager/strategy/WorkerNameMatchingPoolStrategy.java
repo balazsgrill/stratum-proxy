@@ -139,6 +139,7 @@ public class WorkerNameMatchingPoolStrategy implements
 		}
 		
 		if (selection == null){
+			LOGGER.error("No pool found for ID: "+ids);
 			throw new NoPoolAvailableException("No pool found for ID: "+ids);
 		}
 		
