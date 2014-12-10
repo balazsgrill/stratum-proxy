@@ -47,5 +47,12 @@ public interface Connection {
 	 * @return
 	 */
 	public Integer getRemotePort();
+	
+	/**
+	 * Return the local port.
+	 * 
+	 * @return
+	 */
+	public Integer getLocalPort();
 
 }

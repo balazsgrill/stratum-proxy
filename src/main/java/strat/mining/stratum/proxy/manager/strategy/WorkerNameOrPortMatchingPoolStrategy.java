@@ -23,16 +23,16 @@ import strat.mining.stratum.proxy.worker.WorkerConnection;
  * @author balazs.grill
  *
  */
-public class WorkerNameMatchingPoolStrategy implements
+public class WorkerNameOrPortMatchingPoolStrategy implements
 		PoolSwitchingStrategyManager {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(WorkerNameMatchingPoolStrategy.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(WorkerNameOrPortMatchingPoolStrategy.class);
 	
 	public static final String NAME = "WorkerName";
 	
 	private final ProxyManager proxyManager;
 	
-	public WorkerNameMatchingPoolStrategy(ProxyManager proxyManager) {
+	public WorkerNameOrPortMatchingPoolStrategy(ProxyManager proxyManager) {
 		this.proxyManager = proxyManager;
 	}
 	
@@ -123,6 +123,7 @@ public class WorkerNameMatchingPoolStrategy implements
 	@Override
 	public Pool getPoolForConnection(WorkerConnection connection)
 			throws NoPoolAvailableException {
+		
 		Set<String> ids = new HashSet<>(connection.getAuthorizedWorkers().keySet());
 		for(User user : proxyManager.getUsers()){
 			if (user.getWorkerConnections().contains(connection)){
@@ -130,12 +131,17 @@ public class WorkerNameMatchingPoolStrategy implements
 			}
 		}
 		
+		Integer port = connection.getLocalPort();
+		if (port != null){
+			ids.add("port:"+port);
+		}
+		
 		Pool selection = null;
 		int priority = Integer.MAX_VALUE;
 		
 		for(Pool pool : proxyManager.getPools()){
 			if (pool.isStable()){
-				if (ids.isEmpty() || ids.contains(getPoolID(pool.getName()))){
+				if (ids.contains(getPoolID(pool.getName()))){
 					int p = pool.getPriority() == null ? Integer.MAX_VALUE-1 : pool.getPriority().intValue();
 					if (selection == null || p < priority){
 						selection = pool;

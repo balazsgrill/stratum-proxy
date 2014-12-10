@@ -86,6 +86,11 @@ public abstract class StratumConnection implements Connection {
 		this.isFirstLine = true;
 	}
 
+	@Override
+	public Integer getLocalPort() {
+		return socket.getLocalPort();
+	}
+	
 	/**
 	 * Send a request to the remote host.
 	 * 

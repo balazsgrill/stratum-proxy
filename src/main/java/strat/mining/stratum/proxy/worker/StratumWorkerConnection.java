@@ -241,8 +241,6 @@ public class StratumWorkerConnection extends StratumConnection implements Worker
 		response.setResult(Boolean.TRUE);
 		sendResponse(response);
 		
-		manager.updatePoolForConnection(this);
-		
 	}
 
 	@Override

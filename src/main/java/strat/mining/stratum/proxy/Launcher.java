@@ -372,6 +372,10 @@ public class Launcher {
 			// Start to accept incoming workers connections
 			ProxyManager.getInstance().startListeningIncomingConnections(configurationManager.getStratumBindAddress(),
 					configurationManager.getStratumListeningPort());
+			ProxyManager.getInstance().startListeningIncomingConnections(configurationManager.getStratumBindAddress(),
+					configurationManager.getStratumListeningPort()+1);
+			ProxyManager.getInstance().startListeningIncomingConnections(configurationManager.getStratumBindAddress(),
+					configurationManager.getStratumListeningPort()+2);
 		} else {
 			LOGGER.info("Stratum port disabled.");
 		}

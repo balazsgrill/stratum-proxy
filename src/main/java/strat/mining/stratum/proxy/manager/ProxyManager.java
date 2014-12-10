@@ -85,8 +85,7 @@ public class ProxyManager {
 
 	private static ProxyManager instance;
 
-	private ServerSocket serverSocket;
-	private Thread listeningThread;
+	private final Map<ServerSocket, Thread> listeningThreads = new HashMap<>();
 
 	private List<Pool> pools;
 
@@ -162,6 +161,7 @@ public class ProxyManager {
 	 * @throws IOException
 	 */
 	public void startListeningIncomingConnections(String bindInterface, Integer port) throws IOException {
+		final ServerSocket serverSocket;
 		if (bindInterface == null) {
 			serverSocket = new ServerSocket(port, 0);
 		} else {
@@ -169,7 +169,7 @@ public class ProxyManager {
 		}
 		LOGGER.info("ServerSocket opened on {}.", serverSocket.getLocalSocketAddress());
 
-		listeningThread = new Thread() {
+		Thread listeningThread = new Thread() {
 			public void run() {
 				while (!Thread.currentThread().isInterrupted() && !serverSocket.isClosed()) {
 					Socket incomingConnectionSocket = null;
@@ -185,7 +185,7 @@ public class ProxyManager {
 						workerConnection.startReading();
 					} catch (Exception e) {
 						// Do not log the error if a close has been requested
-						// (as the error is expected ans is part of the shutdown
+						// (as the error is expected and is part of the shutdown
 						// process)
 						if (!closeRequested) {
 							LOGGER.error("Error on the server socket {}.", serverSocket.getLocalSocketAddress(), e);
@@ -196,6 +196,7 @@ public class ProxyManager {
 				LOGGER.info("Stop to listen incoming connection on {}.", serverSocket.getLocalSocketAddress());
 			}
 		};
+		listeningThreads.put(serverSocket, listeningThread);
 		listeningThread.setName("StratumProxyManagerSeverSocketListener");
 		listeningThread.setDaemon(true);
 		listeningThread.start();
@@ -205,13 +206,15 @@ public class ProxyManager {
 	 * Stop to listen incoming connections
 	 */
 	public void stopListeningIncomingConnections() {
-		if (serverSocket != null) {
-			LOGGER.info("Closing the server socket on {}.", serverSocket.getLocalSocketAddress());
-			try {
-				closeRequested = true;
-				serverSocket.close();
-			} catch (Exception e) {
-				LOGGER.error("Failed to close serverSocket on {}.", serverSocket.getLocalSocketAddress(), e);
+		for(ServerSocket serverSocket : listeningThreads.keySet()){
+			if (serverSocket != null) {
+				LOGGER.info("Closing the server socket on {}.", serverSocket.getLocalSocketAddress());
+				try {
+					closeRequested = true;
+					serverSocket.close();
+				} catch (Exception e) {
+					LOGGER.error("Failed to close serverSocket on {}.", serverSocket.getLocalSocketAddress(), e);
+				}
 			}
 		}
 	}
@@ -261,7 +264,6 @@ public class ProxyManager {
 		linkConnectionToUser(connection, request);
 		
 		LOGGER.info("Authorized worker: "+request.getUsername());
-		updatePoolForConnection(connection);
 	}
 	
 	public void updatePoolForConnection(WorkerConnection connection){

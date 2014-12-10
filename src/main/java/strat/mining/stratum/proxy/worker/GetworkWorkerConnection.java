@@ -168,6 +168,11 @@ public class GetworkWorkerConnection implements WorkerConnection {
 	public Integer getRemotePort() {
 		return null;
 	}
+	
+	@Override
+	public Integer getLocalPort() {
+		return null;
+	}
 
 	@Override
 	public Pool getPool() {

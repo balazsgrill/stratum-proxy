@@ -31,7 +31,7 @@ public class PoolSwitchingStrategyFactory {
 
 	public PoolSwitchingStrategyManager getPoolSwitchingStrategyManagerByName(String name) throws UnsupportedPoolSwitchingStrategyException {
 		PoolSwitchingStrategyManager result = null;
-		if (WorkerNameMatchingPoolStrategy.NAME.equalsIgnoreCase(name)){
+		if (WorkerNameOrPortMatchingPoolStrategy.NAME.equalsIgnoreCase(name)){
 			result = getWorkerNameMatchingPoolStrategy();
 		}else
 		if (PriorityFailoverStrategyManager.NAME.equalsIgnoreCase(name)) {
@@ -45,8 +45,8 @@ public class PoolSwitchingStrategyFactory {
 		return result;
 	}
 
-	private WorkerNameMatchingPoolStrategy getWorkerNameMatchingPoolStrategy(){
-		return new WorkerNameMatchingPoolStrategy(proxyManager);
+	private WorkerNameOrPortMatchingPoolStrategy getWorkerNameMatchingPoolStrategy(){
+		return new WorkerNameOrPortMatchingPoolStrategy(proxyManager);
 	}
 	
 	private PriorityFailoverStrategyManager getPriorityFailoverStrategyManager() {
