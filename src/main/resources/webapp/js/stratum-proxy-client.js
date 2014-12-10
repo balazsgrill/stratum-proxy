@@ -46,7 +46,7 @@ PoolsPageController.prototype.constructor = PageController;
 PoolsPageController.prototype.onLoad = function() {
 	var controller = this;
 	$.ajax({
-		url : window.location.pathname+"/proxy/pool/list",
+		url : "/proxy/pool/list",
 		dataType : "json",
 		contentType : "application/json",
 		success : function(data) {
@@ -125,7 +125,7 @@ PoolsPageController.prototype.refresh = function(onSuccess) {
 
 	// Reload pool data
 	$.ajax({
-		url : window.location.pathname+"/proxy/pool/list",
+		url : "/proxy/pool/list",
 		dataType : "json",
 		contentType : "application/json",
 		success : function(data) {
@@ -192,7 +192,7 @@ PoolsPageController.prototype.setPoolPriority = function(poolName, priority) {
 
 	// Update the priority
 	$.ajax({
-		url : window.location.pathname+"/proxy/pool/priority",
+		url : "/proxy/pool/priority",
 		dataType : "json",
 		type : "POST",
 		data : JSON.stringify({
@@ -327,9 +327,9 @@ PoolsPageController.prototype.setPoolEnabled = function(poolName, isEnabled) {
 	var controller = this, url;
 
 	if (isEnabled) {
-		url = window.location.pathname+"/proxy/pool/enable";
+		url = "/proxy/pool/enable";
 	} else {
-		url = window.location.pathname+"/proxy/pool/disable";
+		url = "/proxy/pool/disable";
 	}
 
 	// Reload pool data
@@ -379,7 +379,7 @@ PoolsPageController.prototype.removePool = function(poolName) {
 	removePoolFunction = function(keepHistory) {
 		modal.modal('hide');
 		$.ajax({
-			url : window.location.pathname+'/proxy/pool/remove',
+			url : '/proxy/pool/remove',
 			dataType : "json",
 			type : "POST",
 			data : JSON.stringify({
@@ -609,7 +609,7 @@ LogsPageController.prototype.loadLevel = function() {
 	selectPicker.selectpicker('refresh');
 
 	$.ajax({
-		url : window.location.pathname+'/proxy/log/level',
+		url : '/proxy/log/level',
 		dataType : "json",
 		type : "GET",
 		contentType : "application/json",
@@ -638,7 +638,7 @@ LogsPageController.prototype.initLogLevelSelect = function() {
 		var selectedValue = selectPicker.find('option:selected').text();
 		selectPicker.selectpicker('refresh');
 		$.ajax({
-			url : window.location.pathname+'/proxy/log/level',
+			url : '/proxy/log/level',
 			dataType : "json",
 			type : "POST",
 			data : JSON.stringify({
@@ -659,7 +659,7 @@ LogsPageController.prototype.initLogLevelSelect = function() {
 LogsPageController.prototype.refresh = function() {
 	var controller = this;
 	$.ajax({
-		url : window.location.pathname+'/proxy/log/since',
+		url : '/proxy/log/since',
 		dataType : "json",
 		type : "POST",
 		data : JSON.stringify({
@@ -753,7 +753,7 @@ UsersPageController.prototype.constructor = PageController;
 UsersPageController.prototype.onLoad = function() {
 	var controller = this;
 	$.ajax({
-		url : window.location.pathname+"/proxy/user/list",
+		url : "/proxy/user/list",
 		dataType : "json",
 		contentType : "application/json",
 		success : function(data) {
@@ -817,7 +817,7 @@ UsersPageController.prototype.refresh = function(onSuccess) {
 
 	// Reload user data
 	$.ajax({
-		url : window.location.pathname+"/proxy/user/list",
+		url : "/proxy/user/list",
 		dataType : "json",
 		contentType : "application/json",
 		success : function(data) {
@@ -1238,7 +1238,7 @@ PoolItem.prototype.getRemoveButton = function() {
 PoolItem.prototype.reloadChartData = function(isUpdate) {
 	var poolItem = this;
 	$.ajax({
-		url : window.location.pathname+"/proxy/hashrate/pool",
+		url : "/proxy/hashrate/pool",
 		dataType : "json",
 		type : "POST",
 		data : JSON.stringify({
@@ -1516,7 +1516,7 @@ UserItem.prototype.getBanButton = function() {
 UserItem.prototype.reloadChartData = function(isUpdate) {
 	var userItem = this;
 	$.ajax({
-		url : window.location.pathname+"/proxy/hashrate/user",
+		url : "/proxy/hashrate/user",
 		dataType : "json",
 		type : "POST",
 		data : JSON.stringify({
