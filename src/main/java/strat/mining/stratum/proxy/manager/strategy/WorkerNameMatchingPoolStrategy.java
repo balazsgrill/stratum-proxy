@@ -135,7 +135,7 @@ public class WorkerNameMatchingPoolStrategy implements
 		
 		for(Pool pool : proxyManager.getPools()){
 			if (pool.isStable()){
-				if (ids.contains(getPoolID(pool.getName()))){
+				if (ids.isEmpty() || ids.contains(getPoolID(pool.getName()))){
 					int p = pool.getPriority() == null ? Integer.MAX_VALUE-1 : pool.getPriority().intValue();
 					if (selection == null || p < priority){
 						selection = pool;
@@ -146,6 +146,7 @@ public class WorkerNameMatchingPoolStrategy implements
 		}
 		
 		if (selection == null){
+			LOGGER.error("No pool found for ID: "+ids);
 			throw new NoPoolAvailableException("No pool found for ID: "+ids);
 		}
 		
