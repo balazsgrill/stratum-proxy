@@ -4,6 +4,7 @@
 package strat.mining.stratum.proxy.manager.strategy;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,6 +15,7 @@ import strat.mining.stratum.proxy.exception.ChangeExtranonceNotSupportedExceptio
 import strat.mining.stratum.proxy.exception.NoPoolAvailableException;
 import strat.mining.stratum.proxy.exception.TooManyWorkersException;
 import strat.mining.stratum.proxy.manager.ProxyManager;
+import strat.mining.stratum.proxy.model.User;
 import strat.mining.stratum.proxy.pool.Pool;
 import strat.mining.stratum.proxy.worker.WorkerConnection;
 
@@ -121,7 +123,12 @@ public class WorkerNameMatchingPoolStrategy implements
 	@Override
 	public Pool getPoolForConnection(WorkerConnection connection)
 			throws NoPoolAvailableException {
-		Set<String> ids = connection.getAuthorizedWorkers().keySet();
+		Set<String> ids = new HashSet<>(connection.getAuthorizedWorkers().keySet());
+		for(User user : proxyManager.getUsers()){
+			if (user.getWorkerConnections().contains(connection)){
+				ids.add(user.getName());
+			}
+		}
 		
 		Pool selection = null;
 		int priority = Integer.MAX_VALUE;

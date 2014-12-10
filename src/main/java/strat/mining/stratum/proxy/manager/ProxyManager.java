@@ -259,6 +259,17 @@ public class ProxyManager {
 		connection.getPool().authorizeWorker(request);
 
 		linkConnectionToUser(connection, request);
+		
+		LOGGER.info("Authorized worker: "+request.getUsername());
+		try {
+			Pool p = poolSwitchingStrategyManager.getPoolForConnection(connection);
+			if (!p.equals(connection.getPool())){
+				LOGGER.info("Moving worker {} to pool {}", request.getUsername(), p.getName());
+				switchPoolForConnection(connection, p);
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+		}
 	}
 
 	/**
