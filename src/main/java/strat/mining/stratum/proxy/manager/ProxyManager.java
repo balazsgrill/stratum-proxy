@@ -259,6 +259,15 @@ public class ProxyManager {
 		connection.getPool().authorizeWorker(request);
 
 		linkConnectionToUser(connection, request);
+		
+		try {
+			Pool p = poolSwitchingStrategyManager.getPoolForConnection(connection);
+			if (!p.equals(connection.getPool())){
+				switchPoolForConnection(connection, p);
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+		}
 	}
 
 	/**
