@@ -274,6 +274,15 @@ public class ProxyManager {
 				LOGGER.info("Moving worker {} to pool {}", connection.getConnectionName(), p.getName());
 				switchPoolForConnection(connection, p);
 			}
+		} catch (NoPoolAvailableException e){
+			LOGGER.warn("No pool available for {}. Disconnecting.", connection.getConnectionName());
+			connection.close();
+		} catch (TooManyWorkersException e){
+			LOGGER.warn("Too many workers on pool, Disconnecting {}.", connection.getConnectionName());
+			connection.close();
+		} catch (ChangeExtranonceNotSupportedException e){
+			LOGGER.warn("Extranonce Change is not supported by {}. Disconnecting.", connection.getConnectionName());
+			connection.close();
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}

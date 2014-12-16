@@ -11,9 +11,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import strat.mining.stratum.proxy.exception.ChangeExtranonceNotSupportedException;
 import strat.mining.stratum.proxy.exception.NoPoolAvailableException;
-import strat.mining.stratum.proxy.exception.TooManyWorkersException;
 import strat.mining.stratum.proxy.manager.ProxyManager;
 import strat.mining.stratum.proxy.model.User;
 import strat.mining.stratum.proxy.pool.Pool;
@@ -80,7 +78,7 @@ public class WorkerNameOrPortMatchingPoolStrategy implements
 	 */
 	@Override
 	public void onPoolUp(Pool pool) {
-		updateConnections();
+		// Nothing to do
 	}
 
 	/* (non-Javadoc)
@@ -101,19 +99,7 @@ public class WorkerNameOrPortMatchingPoolStrategy implements
 	
 	private void updateConnections(){
 		for(WorkerConnection wc : proxyManager.getWorkerConnections()){
-			try {
-				Pool shouldbe = getPoolForConnection(wc);
-				if (!shouldbe.equals(wc.getPool())){
-					proxyManager.switchPoolForConnection(wc, shouldbe);
-				}
-			} catch (NoPoolAvailableException e) {
-				LOGGER.error(e.getMessage());
-			} catch (TooManyWorkersException e) {
-				LOGGER.error(e.getMessage());
-			} catch (ChangeExtranonceNotSupportedException e) {
-				LOGGER.error(e.getMessage());
-			}
-			
+			proxyManager.updatePoolForConnection(wc);
 		}
 	}
 	
