@@ -12,22 +12,14 @@
 	</dependencySets>
 	<files>
 		<file>
-			<source>${project.build.directory}/stratum-proxy-${project.version}.jar
+			<source>${project.build.directory}/strat.mining.stratum.proxy-${project.version}.jar
 			</source>
 			<outputDirectory>/</outputDirectory>
-			<destName>stratum-proxy.jar</destName>
+			<destName>strat.mining.stratum.proxy.jar</destName>
 		</file>
 		<file>
 			<source>${basedir}/LICENCE</source>
 			<outputDirectory>/</outputDirectory>
-		</file>
-		<file>
-			<source>${basedir}/README.md</source>
-			<outputDirectory>/</outputDirectory>
-		</file>
-		<file>
-			<source>${project.build.directory}/stratum-proxy-webapp.jar</source>
-			<outputDirectory>/lib</outputDirectory>
 		</file>
 	</files>
 </assembly>

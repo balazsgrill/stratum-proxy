@@ -168,7 +168,7 @@
 					<header>src/main/resources/headerGPLv3Template.txt</header>
 				</configuration>
 			</plugin>
-			<!-- <plugin>
+			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.4</version>
 				<executions>
@@ -182,12 +182,12 @@
 							<descriptors>
 								<descriptor>assemblies/distAssembly.xml</descriptor>
 							</descriptors>
-							<finalName>stratum-proxy-${project.version}</finalName>
+							<finalName>strat.mining.stratum.proxy-${project.version}</finalName>
 							<appendAssemblyId>false</appendAssemblyId>
 						</configuration>
 					</execution>
 				</executions>
-			</plugin> -->
+			</plugin>
 		</plugins>
 	</build>
 </project>
