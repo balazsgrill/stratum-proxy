@@ -42,11 +42,21 @@ public class ProxyConfiguration {
 	private Boolean disableApi;
 	private Boolean disableLogAppend;
 	
+	private Double minimumDifficulty;
+	
 	private Boolean logRealShareDifficulty = false;
 	
 	private CryptoAlgorithm algo;
 	
 	private List<PoolConfiguration> pools;
+	
+	public void setMinimumDifficulty(Double minimumDifficulty) {
+		this.minimumDifficulty = minimumDifficulty;
+	}
+	
+	public Double getMinimumDifficulty() {
+		return minimumDifficulty;
+	}
 	
 	public void setLogRealShareDifficulty(Boolean logRealShareDifficulty) {
 		this.logRealShareDifficulty = logRealShareDifficulty;

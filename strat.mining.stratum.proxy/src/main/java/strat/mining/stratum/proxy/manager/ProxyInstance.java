@@ -377,6 +377,11 @@ public class ProxyInstance {
 				connection.onPoolDifficultyChanged(notification);
 			}
 		}
+		
+		/* Suggest minimum difficulty to pool */
+		if (configuration.getMinimumDifficulty() != null && setDifficulty.getDifficulty() < configuration.getMinimumDifficulty()){
+			pool.suggestDifficulty(configuration.getMinimumDifficulty());
+		}
 	}
 
 	/**

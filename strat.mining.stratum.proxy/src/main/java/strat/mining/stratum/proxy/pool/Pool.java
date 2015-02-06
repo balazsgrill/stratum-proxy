@@ -57,6 +57,7 @@ import strat.mining.stratum.proxy.json.MiningSubmitRequest;
 import strat.mining.stratum.proxy.json.MiningSubmitResponse;
 import strat.mining.stratum.proxy.json.MiningSubscribeRequest;
 import strat.mining.stratum.proxy.json.MiningSubscribeResponse;
+import strat.mining.stratum.proxy.json.MiningSuggestDifficultyRequest;
 import strat.mining.stratum.proxy.manager.ProxyInstance;
 import strat.mining.stratum.proxy.model.Share;
 import strat.mining.stratum.proxy.utils.Timer;
@@ -497,7 +498,7 @@ public class Pool {
 
 		return isAuthorized;
 	}
-
+	
 	/**
 	 * Set the pool as ready.
 	 */
@@ -1079,6 +1080,12 @@ public class Pool {
 
 	public String getWorkerSeparator() {
 		return workerSeparator;
+	}
+	
+	public void suggestDifficulty(Double difficulty){
+		MiningSuggestDifficultyRequest request = new MiningSuggestDifficultyRequest();
+		request.setDifficulty(difficulty);
+		connection.sendRequest(request);
 	}
 
 }
