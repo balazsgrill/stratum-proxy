@@ -179,6 +179,9 @@ public class ProxyConfiguration {
 	}
 
 	public List<PoolConfiguration> getPools() {
+		if (pools == null){
+			pools = new ArrayList<>();
+		}
 		return pools;
 	}
 

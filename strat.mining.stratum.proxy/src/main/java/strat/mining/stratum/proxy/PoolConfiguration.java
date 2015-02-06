@@ -24,16 +24,16 @@ public class PoolConfiguration {
 	private String host;
 	// Not empty if appendWorkersName false
 	private String user;
-	// Not empty if useWorferPassword false
-	private String password;
+	// Not empty if useWorkerPassword false
+	private String password = "x";
 
-	private Boolean enableExtranonceSubscribe;
-	private Boolean appendWorkerNames;
-	private String workerNameSeparator;
-	private Boolean useWorkerPassword;
-	private Integer weight;
+	private Boolean enableExtranonceSubscribe = false;
+	private Boolean appendWorkerNames = false;
+	private String workerNameSeparator = ".";
+	private Boolean useWorkerPassword = true;
+	private Integer weight = 1;
 
-	private Boolean isEnabled;
+	private Boolean isEnabled = true;
 
 	public String getName() {
 		return name;
