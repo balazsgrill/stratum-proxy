@@ -664,6 +664,8 @@ public class ProxyInstance {
 				: Constants.DEFAULT_WORKER_NAME_SEPARTOR);
 		poolToAdd.setUseWorkerPassword(addPoolDTO.getUseWorkerPassword() != null ? addPoolDTO.getUseWorkerPassword() : false);
 
+		poolToAdd.setPriority(pools.size());
+		
 //		if (addPoolDTO.getPriority() != null) {
 //			poolToAdd.setPriority(addPoolDTO.getPriority());
 //		}
