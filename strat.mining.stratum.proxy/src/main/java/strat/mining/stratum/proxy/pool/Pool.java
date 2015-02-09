@@ -353,7 +353,8 @@ public class Pool {
 				retryConnect(true);
 			}
 		} else {
-			URI newUri = URI.create("stratum+tcp://" + clientReconnect.getHost());
+			int port = clientReconnect.getPort() == null ? Constants.DEFAULT_POOL_PORT : clientReconnect.getPort();
+			URI newUri = URI.create("stratum+tcp://" + clientReconnect.getHost()+":"+port);
 			// Reject the reconnect request if the reconnect is on a different
 			// host and isRejectReconnect is true
 			if (isRejectReconnect && !uri.getHost().equalsIgnoreCase(newUri.getHost())) {
