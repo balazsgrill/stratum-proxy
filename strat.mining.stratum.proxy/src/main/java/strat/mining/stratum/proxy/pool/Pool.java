@@ -568,7 +568,7 @@ public class Pool {
 	}
 
 	public void onDisconnectWithError(Throwable cause) {
-		LOGGER.error("Disconnect of pool {}.", this, cause);
+		LOGGER.info("Disconnect of pool {}.", this, cause);
 
 		String causeMessage = null;
 		// If it is an EOFException, do not log any messages since an error has
