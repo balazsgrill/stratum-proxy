@@ -123,12 +123,26 @@ public class PriorityFailoverStrategyManager extends MonoCurrentPoolStrategyMana
 	 */
 	@Override
 	protected void computeCurrentPool() throws NoPoolAvailableException {
+		final Double minDiff = getProxyManager().getConfiguration().getMinimumDifficulty();
+		
 		List<Pool> pools = getProxyManager().getPools();
 		Pool newPool = null;
 		checkPoolPriorities(pools);
 		Collections.sort(pools, new Comparator<Pool>() {
 			public int compare(Pool o1, Pool o2) {
-				return o1.getPriority().compareTo(o2.getPriority());
+				Integer p1 = o1.getPriority();
+				Integer p2 = o2.getPriority();
+				
+				if (minDiff != null){
+					if (o1.getDifficulty() != null && o1.getDifficulty() < minDiff){
+						p1 = p2+1;
+					}
+					if (o2.getDifficulty() != null && o2.getDifficulty() < minDiff){
+						p2 = p1+1;
+					}
+				}
+				
+				return p1.compareTo(p2);
 			}
 		});
 		for (Pool pool : pools) {
