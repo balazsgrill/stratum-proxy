@@ -10,6 +10,7 @@ package strat.mining.stratum.proxy;
 public enum CryptoAlgorithm {
 
 	Scrypt,
-	SHA256
+	SHA256,
+	X11
 	
 }

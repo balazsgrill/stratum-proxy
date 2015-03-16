@@ -35,6 +35,8 @@ public final class DifficultyUtils {
 			realDifficulty = ScryptHashingUtils.getRealShareDifficulty(blockHeader);
 			break;
 		case SHA256:
+		case X11:
+			/* Diff1 of X11 is the same as for SHA256 (http://bitcoin.stackexchange.com/questions/24019/x11-multiplier-maxdiff-number-to-multiple-the-shares-by-in-order-to-display) */
 			realDifficulty = SHA256HashingUtils.getRealShareDifficulty(blockHeader);
 			break;
 		}

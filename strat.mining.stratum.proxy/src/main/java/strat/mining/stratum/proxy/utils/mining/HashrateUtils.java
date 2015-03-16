@@ -48,6 +48,8 @@ public final class HashrateUtils {
 			averageNumberOfHashesPerShareAtDifficultyOne = Constants.AVERAGE_NUMBER_OF_HASHES_PER_SHARE_AT_DIFFICULTY_ONE_SCRYPT;
 			break;
 		case SHA256:
+		case X11:
+			/* Diff1 of X11 is the same as for SHA256 (http://bitcoin.stackexchange.com/questions/24019/x11-multiplier-maxdiff-number-to-multiple-the-shares-by-in-order-to-display) */
 			averageNumberOfHashesPerShareAtDifficultyOne = Constants.AVERAGE_NUMBER_OF_HASHES_PER_SHARE_AT_DIFFICULTY_ONE;
 			break;
 		}
