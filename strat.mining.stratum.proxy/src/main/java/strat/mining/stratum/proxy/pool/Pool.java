@@ -43,6 +43,7 @@ import strat.mining.stratum.proxy.CryptoAlgorithm;
 import strat.mining.stratum.proxy.callback.ResponseReceivedCallback;
 import strat.mining.stratum.proxy.constant.Constants;
 import strat.mining.stratum.proxy.exception.AuthorizationException;
+import strat.mining.stratum.proxy.exception.NotConnectedException;
 import strat.mining.stratum.proxy.exception.PoolStartException;
 import strat.mining.stratum.proxy.exception.TooManyWorkersException;
 import strat.mining.stratum.proxy.json.ClientReconnectNotification;
@@ -164,6 +165,34 @@ public class Pool {
 		this.pendingAuthorizeRequests = Collections.synchronizedMap(new HashMap<String, CountDownLatch>());
 	}
 
+	public PoolConnection connect() throws URISyntaxException, SocketException, NotConnectedException{
+		LOGGER.debug("Starting pool {}...", getName());
+		uri = new URI("stratum+tcp://" + host);
+		Socket socket = new Socket();
+		socket.setKeepAlive(true);
+		socket.setTcpNoDelay(true);
+
+		try{
+			socket.connect(new InetSocketAddress(uri.getHost(), uri.getPort() > -1 ? uri.getPort() : Constants.DEFAULT_POOL_PORT));
+			PoolConnection connection = new PoolConnection(this, socket);
+			connection.startReading();
+
+			MiningSubscribeRequest request = new MiningSubscribeRequest();
+			startSubscribeTimeoutTimer();
+			connection.sendRequest(request);
+			
+			return connection;
+		} catch (IOException e) {
+			LOGGER.error("Failed to connect the pool {}.", getName(), e);
+			try {
+				socket.close();
+			} catch (IOException e1) {
+				// Suppress additional error
+			}
+			throw new NotConnectedException("Could not connect to pool");
+		}
+	}
+	
 	public synchronized void startPool(ProxyInstance manager) throws PoolStartException, URISyntaxException, SocketException {
 		if (manager != null) {
 			if (!isEnabled) {
@@ -172,23 +201,9 @@ public class Pool {
 
 			this.manager = manager;
 			if (connection == null) {
-				LOGGER.debug("Starting pool {}...", getName());
-				uri = new URI("stratum+tcp://" + host);
-				Socket socket = new Socket();
-				socket.setKeepAlive(true);
-				socket.setTcpNoDelay(true);
-
-				try {
-					socket.connect(new InetSocketAddress(uri.getHost(), uri.getPort() > -1 ? uri.getPort() : Constants.DEFAULT_POOL_PORT));
-					connection = new PoolConnection(this, socket);
-					connection.startReading();
-
-					MiningSubscribeRequest request = new MiningSubscribeRequest();
-					startSubscribeTimeoutTimer();
-					connection.sendRequest(request);
-				} catch (IOException e) {
-					LOGGER.error("Failed to connect the pool {}.", getName(), e);
-					stopPool("Connection failed: " + e.getMessage());
+				try{
+					connection = connect();
+				}catch(NotConnectedException e){
 					retryConnect(true);
 				}
 			}
@@ -274,9 +289,10 @@ public class Pool {
 	 * @param isEnabled
 	 * @throws URISyntaxException
 	 * @throws SocketException
+	 * @throws NotConnectedException 
 	 * @throws Exception
 	 */
-	public void setEnabled(boolean isEnabled) throws PoolStartException, SocketException, URISyntaxException {
+	public void setEnabled(boolean isEnabled) throws PoolStartException, SocketException, URISyntaxException, NotConnectedException {
 		setEnabled(isEnabled, manager);
 	}
 
@@ -287,9 +303,10 @@ public class Pool {
 	 * @param isEnabled
 	 * @throws URISyntaxException
 	 * @throws SocketException
+	 * @throws NotConnectedException 
 	 * @throws Exception
 	 */
-	public void setEnabled(boolean isEnabled, ProxyInstance manager) throws PoolStartException, SocketException, URISyntaxException {
+	public void setEnabled(boolean isEnabled, ProxyInstance manager) throws PoolStartException, SocketException, URISyntaxException, NotConnectedException {
 		if (this.isEnabled != isEnabled) {
 			this.isEnabled = isEnabled;
 			if (isEnabled) {

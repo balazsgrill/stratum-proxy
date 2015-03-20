@@ -29,6 +29,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import strat.mining.stratum.proxy.CryptoAlgorithm;
 import strat.mining.stratum.proxy.constant.Constants;
 import strat.mining.stratum.proxy.exception.AuthorizationException;
 import strat.mining.stratum.proxy.exception.ChangeExtranonceNotSupportedException;
@@ -49,7 +50,6 @@ import strat.mining.stratum.proxy.json.MiningSubmitRequest;
 import strat.mining.stratum.proxy.json.MiningSubmitResponse;
 import strat.mining.stratum.proxy.json.MiningSubscribeRequest;
 import strat.mining.stratum.proxy.json.MiningSubscribeResponse;
-import strat.mining.stratum.proxy.manager.ProxyInstance;
 import strat.mining.stratum.proxy.model.Share;
 import strat.mining.stratum.proxy.network.StratumConnection;
 import strat.mining.stratum.proxy.pool.Pool;
@@ -63,8 +63,6 @@ public class StratumWorkerConnection extends StratumConnection implements Worker
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkerConnection.class);
 
 	private Pool pool;
-
-	private ProxyInstance manager;
 
 	private Task subscribeTimeoutTask;
 	private Integer subscribeReceiveTimeout = Constants.DEFAULT_SUBSCRIBE_RECEIVE_TIMEOUT;
@@ -84,13 +82,17 @@ public class StratumWorkerConnection extends StratumConnection implements Worker
 
 	private Boolean logRealShareDifficulty;
 	private GetworkJobTemplate currentHeader;
+	
+	private final CryptoAlgorithm algo;
+	private final boolean noMidState;
 
-	public StratumWorkerConnection(Socket socket, ProxyInstance manager) {
+	public StratumWorkerConnection(Socket socket, CryptoAlgorithm algo, boolean logRealShareDifficulty, boolean noMidState) {
 		super(socket);
-		this.manager = manager;
+		this.algo = algo;
+		this.noMidState = noMidState;
 		this.authorizedWorkers = Collections.synchronizedMap(new HashMap<String, String>());
-		logRealShareDifficulty = manager.getConfiguration().getLogRealShareDifficulty();
-		this.workerHashrateDelegator = new WorkerConnectionHashrateDelegator(manager.getConfiguration().getAlgo());
+		this.logRealShareDifficulty = logRealShareDifficulty;
+		this.workerHashrateDelegator = new WorkerConnectionHashrateDelegator(algo);
 	}
 
 	@Override
@@ -115,7 +117,7 @@ public class StratumWorkerConnection extends StratumConnection implements Worker
 
 	@Override
 	protected void onDisconnectWithError(Throwable cause) {
-		manager.onWorkerDisconnection(this, cause);
+		listener.onWorkerDisconnection(this, cause);
 	}
 
 	@Override
@@ -145,7 +147,7 @@ public class StratumWorkerConnection extends StratumConnection implements Worker
 
 		try {
 			// Throws an exception if the worker is not authorized
-			manager.onAuthorizeRequest(this, request);
+			listener.onAuthorizeRequest(this, request);
 			response.setIsAuthorized(true);
 			authorizedWorkers.put(request.getUsername(), request.getPassword());
 		} catch (AuthorizationException e) {
@@ -169,7 +171,7 @@ public class StratumWorkerConnection extends StratumConnection implements Worker
 
 		JsonRpcError error = null;
 		try {
-			pool = manager.onSubscribeRequest(this, request);
+			pool = listener.onSubscribeRequest(this, request);
 		} catch (NoPoolAvailableException e) {
 			LOGGER.error("No pool available for the connection {}. Sending error and close the connection.", getConnectionName());
 			error = new JsonRpcError();
@@ -220,7 +222,7 @@ public class StratumWorkerConnection extends StratumConnection implements Worker
 			// Modify the request to add the tail of extranonce1 to the
 			// submitted extranonce2
 			request.setExtranonce2(extranonce1Tail + request.getExtranonce2());
-			manager.onSubmitRequest(this, request);
+			listener.onSubmitRequest(this, request);
 		} else {
 			error = new JsonRpcError();
 			error.setCode(JsonRpcError.ErrorCode.UNAUTHORIZED_WORKER.getCode());
@@ -259,7 +261,7 @@ public class StratumWorkerConnection extends StratumConnection implements Worker
 
 		if (logRealShareDifficulty) {
 			Double realDifficulty = DifficultyUtils.getRealShareDifficulty(currentHeader, extranonce1Tail, workerRequest.getExtranonce2(),
-					workerRequest.getNtime(), workerRequest.getNonce(), manager.getConfiguration().getAlgo());
+					workerRequest.getNtime(), workerRequest.getNonce(), algo);
 			difficultyString = Double.toString(realDifficulty) + "/" + difficultyString;
 		}
 
@@ -490,8 +492,8 @@ public class StratumWorkerConnection extends StratumConnection implements Worker
 		if (pool != null) {
 			currentHeader = new GetworkJobTemplate(notification.getJobId(), notification.getBitcoinVersion(), notification.getPreviousHash(),
 					notification.getCurrentNTime(), notification.getNetworkDifficultyBits(), notification.getMerkleBranches(),
-					notification.getCoinbase1(), notification.getCoinbase2(), getPool().getExtranonce1() + extranonce1Tail, manager.getConfiguration().getNoMidstate());
-			currentHeader.setDifficulty(pool.getDifficulty(), manager.getConfiguration().getAlgo());
+					notification.getCoinbase1(), notification.getCoinbase2(), getPool().getExtranonce1() + extranonce1Tail, noMidState);
+			currentHeader.setDifficulty(pool.getDifficulty(), algo);
 		}
 	}
 
@@ -500,7 +502,7 @@ public class StratumWorkerConnection extends StratumConnection implements Worker
 	 */
 	private void updateBlockDifficulty() {
 		if (currentHeader != null) {
-			currentHeader.setDifficulty(pool.getDifficulty(), manager.getConfiguration().getAlgo());
+			currentHeader.setDifficulty(pool.getDifficulty(), algo);
 		}
 	}
 
